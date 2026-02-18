@@ -39,9 +39,12 @@ public class BackendService : IDisposable
 
     #endregion
 
+    // Developer note: per cambiare output modificare questo enum (es. Xbox360).
+    private const GamepadOutputType SelectedOutputType = GamepadOutputType.DualShock4;
+
     #region Fields
 
-    private ViGEmOutput? _vigem;
+    private IGamepadOutput? _vigem;
     private OscInputReceiver? _osc;
     private OutputLoop? _loop;
 
@@ -84,8 +87,8 @@ public class BackendService : IDisposable
                 return (configRoot, gameProfile, macro);
             });
 
-            RaiseStatus("Inizializzazione ViGEm...");
-            _vigem = new ViGEmOutput();
+            RaiseStatus($"Inizializzazione ViGEm ({SelectedOutputType})...");
+            _vigem = GamepadOutputFactory.Create(SelectedOutputType);
             _vigem.Connect();
 
             RaiseStatus($"Avvio OSC su porta {cfg.OscPort}...");
