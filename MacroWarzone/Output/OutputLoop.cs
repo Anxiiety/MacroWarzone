@@ -14,7 +14,7 @@ public sealed class OutputLoop
     private readonly ConfigRoot _cfg;
     private readonly GameProfile _profile;
     private readonly RawInputState _raw;
-    private readonly ViGEmOutput _out;
+    private readonly IGamepadOutput _out;
     private readonly StickProcessor _hipLeft, _hipRight, _adsLeft, _adsRight;
     private readonly MacroConfiguration _draftConfig;
 
@@ -25,7 +25,7 @@ public sealed class OutputLoop
         ConfigRoot cfg,
         GameProfile profile,
         RawInputState raw,
-        ViGEmOutput output,
+        IGamepadOutput output,
         StickProcessor hipLeft, StickProcessor hipRight,
         StickProcessor adsLeft, StickProcessor adsRight,
         List<IMacroRule> macros,
@@ -130,7 +130,8 @@ public sealed class OutputLoop
                 DUp: s.DUp, DDown: s.DDown, DLeft: s.DLeft, DRight: s.DRight,
                 Options: s.Options, Share: s.Share,
                 L3: s.L3, R3: s.R3,
-                TouchClick: s.TouchClick
+                // Alias richiesto: Share vale anche come TouchClick.
+                TouchClick: s.TouchClick || s.Share
             );
 
             // ===== 7. APPLY MACROS =====
