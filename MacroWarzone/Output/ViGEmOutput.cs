@@ -1,4 +1,5 @@
 ﻿using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using System;
 
@@ -57,6 +58,7 @@ public sealed class ViGEmOutput : IGamepadOutput
         // Alias legacy: Share e TouchClick sono equivalenti lato output.
         bool shouldPressShare = o.Share || o.TouchClick;
         _pad.SetButtonState(DualShock4Button.Share, shouldPressShare);
+        
 
         _pad.SetButtonState(DualShock4Button.ThumbLeft, o.L3);
         _pad.SetButtonState(DualShock4Button.ThumbRight, o.R3);

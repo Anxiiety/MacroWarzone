@@ -1,4 +1,6 @@
+using System;
 namespace MacroWarzone;
+
 
 public interface IGamepadOutput : IDisposable
 {

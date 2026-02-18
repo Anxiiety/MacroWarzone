@@ -1,3 +1,5 @@
+using System;
+
 namespace MacroWarzone;
 
 public static class GamepadOutputFactory
@@ -6,6 +8,6 @@ public static class GamepadOutputFactory
     {
         GamepadOutputType.DualShock4 => new ViGEmOutput(),
         GamepadOutputType.Xbox360 => new ViGEmX360Output(),
-        _ => new ViGEmOutput()
+        _ => throw new ArgumentOutOfRangeException(nameof(outputType), outputType, null)
     };
 }

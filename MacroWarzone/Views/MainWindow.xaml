@@ -22,24 +22,15 @@
 
         <!-- ==================== COLORI ==================== -->
         <SolidColorBrush x:Key="BackgroundDark" Color="#0A0E27"/>
-        <LinearGradientBrush x:Key="CardBackground"
-                     StartPoint="0,0"
-                     EndPoint="1,1">
-
-            <!-- viola scuro di base -->
-            <GradientStop Color="#1B1436" Offset="0.0"/>
-
-            <!-- viola/magenta -->
-            <GradientStop Color="#2A1563" Offset="0.35"/>
-
-            <!-- verde iridescente -->
-            <GradientStop Color="#0F6A5C" Offset="0.70"/>
-
-            <!-- ritorno viola scuro -->
-            <GradientStop Color="#1B1436" Offset="1.0"/>
-
+        
+        <LinearGradientBrush x:Key="CardBackground" StartPoint="0,0" EndPoint="1,1">
+            <!-- Viola scuro elegante -->
+            <GradientStop Color="#1A1B3A" Offset="0.0"/>
+            <!-- Viola/blu intermedio -->
+            <GradientStop Color="#252847" Offset="0.5"/>
+            <!-- Ritorno viola scuro -->
+            <GradientStop Color="#1A1B3A" Offset="1.0"/>
         </LinearGradientBrush>
-
 
         <SolidColorBrush x:Key="AccentBlue" Color="#1E88E5"/>
         <SolidColorBrush x:Key="AccentBlueLight" Color="#64B5F6"/>
@@ -48,6 +39,12 @@
         <SolidColorBrush x:Key="TextPrimary" Color="#E0E0E0"/>
         <SolidColorBrush x:Key="TextSecondary" Color="#9E9E9E"/>
         <SolidColorBrush x:Key="BorderColor" Color="#1E88E5"/>
+        <!-- Aggiungi queste nuove brush -->
+        <SolidColorBrush x:Key="ZenBlue" Color="#60A5FA"/>
+        <SolidColorBrush x:Key="ZenPink" Color="#F472B6"/>
+        <SolidColorBrush x:Key="ZenYellow" Color="#FCD34D"/>
+        <SolidColorBrush x:Key="ZenGreen" Color="#34D399"/>
+        <SolidColorBrush x:Key="ZenOrange" Color="#FF6B35"/>
 
         <!-- ==================== STILI GLOBALI ==================== -->
 
@@ -137,7 +134,7 @@
 
         <!-- ==================== SLIDER PERSONALIZZATO ==================== -->
         <Style x:Key="MacroSlider" TargetType="Slider">
-            <Setter Property="Height" Value="12"/>
+            <Setter Property="Height" Value="14"/>
             <Setter Property="Margin" Value="10,12,10,12"/>
             <Setter Property="Foreground" Value="#A855F7"/>
             <Setter Property="Background" Value="#1E293B"/>
@@ -147,37 +144,54 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <!-- Track -->
-                            <Border Grid.Row="0"
-                                    Height="12"
-                                    Background="{TemplateBinding Background}"
-                                    CornerRadius="6">
-                                <!-- Filled portion -->
+                            <Border Grid.Row="1"
+                            Height="6"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="3"
+                            VerticalAlignment="Center">
+                                <!-- Progress bar -->
                                 <Border x:Name="PART_SelectionRange"
-                                        HorizontalAlignment="Left"
-                                        Background="{TemplateBinding Foreground}"
-                                        CornerRadius="6"/>
+                                HorizontalAlignment="Left"
+                                Background="{TemplateBinding Foreground}"
+                                CornerRadius="3"
+                                Height="6"/>
                             </Border>
 
-                            <!-- Thumb -->
-                            <Track Grid.Row="0" x:Name="PART_Track">
+                            <!-- Thumb (pallina slider) -->
+                            <Track Grid.Row="1" x:Name="PART_Track">
                                 <Track.Thumb>
-                                    <Thumb Width="26" Height="26">
+                                    <Thumb>
                                         <Thumb.Template>
                                             <ControlTemplate>
-                                                <Ellipse Fill="#E9D5FF"
-                                                         Stroke="#A855F7"
-                                                         StrokeThickness="4"/>
-
+                                                <Grid>
+                                                    <!-- Glow effect -->
+                                                    <Ellipse Width="20" Height="20"
+                                                     Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Slider}}"
+                                                     Opacity="0.3"/>
+                                                    <!-- Core thumb -->
+                                                    <Ellipse Width="16" Height="16"
+                                                     Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Slider}}"
+                                                     Stroke="White"
+                                                     StrokeThickness="2"/>
+                                                </Grid>
                                             </ControlTemplate>
                                         </Thumb.Template>
                                     </Thumb>
                                 </Track.Thumb>
                             </Track>
+
                         </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -300,8 +314,9 @@
                                      Visibility="Hidden"
                                      Focusable="True"
                                      Text="{Binding SelectedItem.Name,
-               RelativeSource={RelativeSource TemplatedParent},
-               TargetNullValue=''}"/>
+                                        RelativeSource={RelativeSource TemplatedParent},
+                                        Mode=OneWay, 
+                                        TargetNullValue=''}"/>
 
 
                                     <!-- Freccia -->
@@ -489,6 +504,49 @@
             </Setter>
         </Style>
 
+        <!--========================STYLE PER RADIO BUTTON==============================-->
+        <Style x:Key="ControllerTypeRadioButton" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="RadioBorder"
+                        Background="#1E293B"
+                        BorderBrush="#334155"
+                        BorderThickness="2"
+                        CornerRadius="8"
+                        Padding="20,12">
+                            <StackPanel Orientation="Horizontal">
+                                <!-- Icona controller -->
+                                <Ellipse x:Name="RadioDot"
+                                 Width="16" Height="16"
+                                 Fill="Transparent"
+                                 Stroke="{StaticResource AccentBlue}"
+                                 StrokeThickness="2"
+                                 Margin="0,0,10,0"/>
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="RadioDot" Property="Fill" Value="{StaticResource AccentBlue}"/>
+                                <Setter TargetName="RadioBorder" Property="BorderBrush" Value="{StaticResource AccentBlue}"/>
+                                <Setter TargetName="RadioBorder" Property="Background" Value="#1A1E88E5"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RadioBorder" Property="BorderBrush" Value="{StaticResource AccentBlueLight}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
     </Window.Resources>
 
@@ -507,49 +565,66 @@
             <!-- Contenuto principale -->
         </Grid.RowDefinitions>
 
-
-        <!-- ==================== HEADER ==================== -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="ANXIETY Service"
-           Style="{StaticResource TitleStyle}">
-                <TextBlock.Effect>
-                    <DropShadowEffect Color="#A855F7"
-                          BlurRadius="18"
-                          ShadowDepth="0"
-                          Opacity="0.55"/>
-                </TextBlock.Effect>
-            </TextBlock>
-
-            <TextBlock Text="{Binding StatusMessage}" 
-                       Style="{StaticResource SubtitleStyle}"/>
-        </StackPanel>
-
         <!-- ==================== PULSANTI CONTROLLO ==================== -->
-        <StackPanel Grid.Row="1" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Center"
-                    Margin="0,0,0,20">
+        <StackPanel Grid.Row="1"
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Margin="0,0,0,20">
 
-            <Button Content="START" 
-                    Command="{Binding StartCommand}"
-                    Width="120" 
-                    Height="45"
-                    Margin="0,0,10,0"
-                    Style="{StaticResource StartButton}"/>
+            <Button Content="START"
+            Command="{Binding StartCommand}"
+            Width="120"
+            Height="45"
+            Margin="0,0,10,0"
+            Style="{StaticResource StartButton}"/>
 
-            <Button Content="STOP" 
-                    Command="{Binding StopCommand}"
-                    Width="120" 
-                    Height="45"
-                    Margin="0,0,10,0"
-                    Style="{StaticResource StopButton}"/>
+            <Button Content="STOP"
+            Command="{Binding StopCommand}"
+            Width="120"
+            Height="45"
+            Margin="0,0,10,0"
+            Style="{StaticResource StopButton}"/>
+
+            <Button Content="RESET DEFAULT"
+            Command="{Binding ResetToDefaultCommand}"
+            Width="140"
+            Height="45"
+            Margin="0,0,10,0"
+            Style="{StaticResource BlueButton}"/>
+
+            <!-- SAVE (manca) -->
+            <Button Content="SAVE"
+            Command="{Binding SaveAndReloadMacrosCommand}"
+            Width="120"
+            Height="45"
+            Margin="0,0,20,0"
+            Style="{StaticResource BlueButton}"/>
+
+            <StackPanel Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Margin="0,10,0,0">
+
+                <TextBlock Text="OUTPUT:"
+               Foreground="White"
+               VerticalAlignment="Center"
+               Margin="0,0,15,0"
+               FontWeight="SemiBold"/>
+
+                <RadioButton Content="DualShock 4" Style="{StaticResource ControllerTypeRadioButton}"
+                 GroupName="OutputType"
+                 Foreground="White"
+                 Margin="0,0,15,0"
+                 IsChecked="{Binding IsDs4Selected, Mode=TwoWay}"/>
+
+                <RadioButton Content="Xbox 360" Style="{StaticResource ControllerTypeRadioButton}"
+                 GroupName="OutputType"
+                 Foreground="White"
+                 IsChecked="{Binding IsXboxSelected, Mode=TwoWay}"/>
+
+            </StackPanel>
 
 
-            <Button Content="RESET DEFAULT" 
-                    Command="{Binding ResetToDefaultCommand}"
-                    Width="140" 
-                    Height="45"
-                    Style="{StaticResource BlueButton}"/>
         </StackPanel>
 
         <!-- ==================== CONTENUTO PRINCIPALE ==================== -->
@@ -566,7 +641,7 @@
                 <StackPanel>
 
                     <!-- ==================== ANTI-RECOIL (NO WEAPON) ==================== -->
-                    <Expander Style="{StaticResource MacroExpanderCard}" IsExpanded="True">
+                    <Expander  IsExpanded="False" Margin="0,15,0,0">
                         <Expander.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -575,14 +650,11 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Checkbox + titolo -->
-                                <CheckBox Grid.Column="0"
-                                          Content="Anti-Recoil"
+                                <CheckBox Content="🎯 ANTI-RECOIL"
                                           IsChecked="{Binding AntiRecoilEnabled}"
-                                          Foreground="{StaticResource TextPrimary}"
                                           Style="{StaticResource MacroCheckBox}"
-                                          FontSize="16"
-                                          FontWeight="SemiBold"
-                                          VerticalAlignment="Center"/>
+                                          FontSize="18"
+                                          Margin="0"/>
                             </Grid>
                         </Expander.Header>
 
@@ -744,8 +816,7 @@
 
 
                     <!-- ==================== AIM ASSIST ==================== -->
-                    <Expander Style="{StaticResource MacroExpanderCard}"
-          IsExpanded="False">
+                    <Expander  IsExpanded="False" Margin="0,15,0,0">
 
                         <Expander.Header>
                             <Grid>
@@ -755,14 +826,11 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Checkbox + titolo -->
-                                <CheckBox Grid.Column="0"
-                                          Content="Aim Assist"
+                                <CheckBox Content="🧲 AIM ASSIST (Advanced)"
                                           IsChecked="{Binding AimAssistEnabled}"
-                                          Foreground="{StaticResource TextPrimary}"
                                           Style="{StaticResource MacroCheckBox}"
-                                          FontSize="16"
-                                          FontWeight="SemiBold"
-                                          VerticalAlignment="Center"/>
+                                          FontSize="18"
+                                          Margin="0"/>
 
                             </Grid>
                         </Expander.Header>
@@ -900,6 +968,252 @@
 
                         </StackPanel>
                     </Expander>
+
+                    <!-- ==================== 🎯 CRONUS ZEN AIM ASSIST ==================== -->
+                    <!-- INSERISCI QUESTA SEZIONE DOPO L'EXPANDER "AIM ASSIST" (dopo riga 922) -->
+
+                    <Expander IsExpanded="False" Margin="0,15,0,0">
+                        <Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox Grid.Column="0"
+                                          Content="🎯 CRONUS ZEN AIM ASSIST"
+                                          IsChecked="{Binding ZenCronusAimAssistEnabled}"
+                                          Style="{StaticResource MacroCheckBox}"
+                                          FontSize="18"
+                                          Margin="0"/>
+
+                                <StackPanel Grid.Column="1" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        Margin="10,0,20,0">
+                                    <TextBlock Text="⚡ ADVANCED"
+                           Foreground="#FF6B35"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Background="#33FF6B35"
+                           Padding="6,2,6,2"
+                           VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Expander.Header>
+
+                        <StackPanel Margin="20,10,0,0">
+
+                            <!-- INFO BANNER -->
+                            <Border Background="#1A6366F1" 
+                BorderBrush="#6366F1" 
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12"
+                Margin="0,0,0,15">
+                                <StackPanel>
+                                    <TextBlock Text="⚙️ ALGORITMO ZEN REPLICATO"
+                           Foreground="#A5B4FC"
+                           FontWeight="Bold"
+                           FontSize="13"
+                           Margin="0,0,0,5"/>
+                                    <TextBlock Text="5 componenti: Sticky Bubble • Micro-Correction • Shake Dampening • ADS Boost • Response Override"
+                           Foreground="#9CA3AF"
+                           FontSize="11"
+                           TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- === STICKY BUBBLE (Slowdown Zone) === -->
+                            <TextBlock Text="🔵 Sticky Bubble (Slowdown Zone)"
+                   Style="{StaticResource SectionHeaderStyle}"
+                   FontSize="14"
+                   Foreground="#60A5FA"
+                   Margin="10,5,0,10"/>
+
+                            <Border Background="#0F1F3F" 
+                CornerRadius="6" 
+                Padding="15" 
+                Margin="10,0,10,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="80"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Bubble Radius" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="0" Grid.Column="1" Value="{Binding BubbleRadius}" Minimum="0.05" Maximum="0.5" TickFrequency="0.01" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding BubbleRadius, StringFormat={}{0:F2}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Bubble Strength" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="1" Grid.Column="1" Value="{Binding BubbleStrength}" Minimum="0" Maximum="0.95" TickFrequency="0.01" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding BubbleStrength, StringFormat={}{0:P0}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Smooth (ms)" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="2" Grid.Column="1" Value="{Binding BubbleSmoothMs}" Minimum="5" Maximum="200" TickFrequency="1" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding BubbleSmoothMs, StringFormat={}{0:F0}}" Style="{StaticResource ParamValueStyle}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- === MICRO-CORRECTION (Pull Magnetico) === -->
+                            <TextBlock Text="🧲 Micro-Correction (Pull Magnetico)"
+                   Style="{StaticResource SectionHeaderStyle}"
+                   FontSize="14"
+                   Foreground="#F472B6"
+                   Margin="10,15,0,10"/>
+
+                            <Border Background="#1F0F3F" 
+                CornerRadius="6" 
+                Padding="15" 
+                Margin="10,0,10,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="80"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Pull Radius" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="0" Grid.Column="1" Value="{Binding MicroCorrectionRadius}" Minimum="0.02" Maximum="0.3" TickFrequency="0.01" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding MicroCorrectionRadius, StringFormat={}{0:F2}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Pull Strength" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="1" Grid.Column="1" Value="{Binding MicroCorrectionStrength}" Minimum="0" Maximum="0.5" TickFrequency="0.01" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding MicroCorrectionStrength, StringFormat={}{0:P0}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Smooth (ms)" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="2" Grid.Column="1" Value="{Binding MicroCorrectionSmoothMs}" Minimum="5" Maximum="200" TickFrequency="1" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding MicroCorrectionSmoothMs, StringFormat={}{0:F0}}" Style="{StaticResource ParamValueStyle}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- === SHAKE DAMPENING (Anti-Jitter) === -->
+                            <TextBlock Text="✋ Shake Dampening (Anti-Jitter)"
+                   Style="{StaticResource SectionHeaderStyle}"
+                   FontSize="14"
+                   Foreground="#FCD34D"
+                   Margin="10,15,0,10"/>
+
+                            <Border Background="#3F2F0F" 
+                CornerRadius="6" 
+                Padding="15" 
+                Margin="10,0,10,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="80"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Shake Threshold" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="0" Grid.Column="1" Value="{Binding ShakeThreshold}" Minimum="0.5" Maximum="10" TickFrequency="0.1" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ShakeThreshold, StringFormat={}{0:F1}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dampening" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="1" Grid.Column="1" Value="{Binding ShakeDampening}" Minimum="0" Maximum="0.95" TickFrequency="0.01" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding ShakeDampening, StringFormat={}{0:P0}}" Style="{StaticResource ParamValueStyle}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- === ADS BOOST & RESPONSE OVERRIDE === -->
+                            <TextBlock Text="⚙️ Advanced Settings"
+                   Style="{StaticResource SectionHeaderStyle}"
+                   FontSize="14"
+                   Foreground="#34D399"
+                   Margin="10,15,0,10"/>
+
+                            <Border Background="#0F3F2F" 
+                CornerRadius="6" 
+                Padding="15" 
+                Margin="10,0,10,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="80"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="ADS Multiplier" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="0" Grid.Column="1" Value="{Binding ZenAdsMultiplier}" Minimum="1" Maximum="3" TickFrequency="0.1" Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ZenAdsMultiplier, StringFormat={}{0:F1}x}" Style="{StaticResource ParamValueStyle}"/>
+
+                                    <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                          Content="Response Curve Override"
+                          IsChecked="{Binding UseResponseOverride}"
+                          Foreground="{StaticResource TextSecondary}"
+                          FontSize="12"
+                          Margin="0,10,0,5"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Center Boost" Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="2" Grid.Column="1" Value="{Binding ResponseCenterBoost}" Minimum="1" Maximum="2" TickFrequency="0.1" Style="{StaticResource MacroSlider}" IsEnabled="{Binding UseResponseOverride}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding ResponseCenterBoost, StringFormat={}{0:F1}x}" Style="{StaticResource ParamValueStyle}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- PRESET VELOCI -->
+                            <TextBlock Text="📦 Quick Presets"
+                   Style="{StaticResource SectionHeaderStyle}"
+                   FontSize="13"
+                   Foreground="#94A3B8"
+                   Margin="10,15,0,10"/>
+
+                            <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Center"
+                    Margin="0,5,0,15">
+                                <Button Content="🔹 Subtle"
+                    Background="#1E293B"
+                    Foreground="#94A3B8"
+                    BorderBrush="#334155"
+                    BorderThickness="1"
+                    Padding="15,8"
+                    Margin="5"
+                    ToolTip="BubbleStr: 0.65 | PullStr: 0.10"
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+
+                                <Button Content="⚡ Balanced"
+                    Background="#1E293B"
+                    Foreground="#60A5FA"
+                    BorderBrush="#3B82F6"
+                    BorderThickness="1"
+                    Padding="15,8"
+                    Margin="5"
+                    ToolTip="BubbleStr: 0.85 | PullStr: 0.20 (Default)"
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+
+                                <Button Content="🔥 Aggressive"
+                    Background="#1E293B"
+                    Foreground="#F472B6"
+                    BorderBrush="#EC4899"
+                    BorderThickness="1"
+                    Padding="15,8"
+                    Margin="5"
+                    ToolTip="BubbleStr: 0.92 | PullStr: 0.35"
+                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </Expander>
+
 
 
                     <!-- ==================== HOLD BREATH (SNIPER) ==================== -->

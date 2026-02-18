@@ -1,6 +1,8 @@
 ﻿using Nefarius.ViGEm.Client;
+using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using System;
+using System.Diagnostics;
 
 namespace MacroWarzone;
 
@@ -23,11 +25,19 @@ public sealed class ViGEmX360Output : IGamepadOutput
     public ViGEmX360Output()
     {
         _pad = _client.CreateXbox360Controller();
+
     }
+
+    private bool _isConnected = false; 
+        public bool IsConnected => _isConnected;
 
     public void Connect()
     {
         _pad.Connect();
+        System.Diagnostics.Debug.WriteLine(_isConnected);
+        Debug.WriteLine(_pad.GetType().FullName);
+
+
     }
 
     public void Send(in OutputState o)

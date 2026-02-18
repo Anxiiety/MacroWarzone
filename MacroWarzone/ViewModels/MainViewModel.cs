@@ -73,6 +73,48 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
     public bool CanStart => !IsRunning;
     public bool CanStop => IsRunning;
 
+    public ObservableCollection<OutputTypeOption> OutputTypes { get; } = new()
+{
+    new OutputTypeOption("DualShock 4 (DS4)", GamepadOutputType.DualShock4),
+    new OutputTypeOption("Xbox 360", GamepadOutputType.Xbox360),
+};
+
+    private OutputTypeOption _selectedOutputType;
+    public OutputTypeOption SelectedOutputType
+    {
+        get => _selectedOutputType;
+        set
+        {
+            if (_selectedOutputType == value) return;
+            _selectedOutputType = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsDs4Selected));
+            OnPropertyChanged(nameof(IsXboxSelected));
+        }
+    }
+    public bool IsDs4Selected
+    {
+        get => SelectedOutputType?.Value == GamepadOutputType.DualShock4;
+        set
+        {
+            if (!value) return;
+            SelectedOutputType = OutputTypes.First(o => o.Value == GamepadOutputType.DualShock4);
+        }
+    }
+
+    public bool IsXboxSelected
+    {
+        get => SelectedOutputType?.Value == GamepadOutputType.Xbox360;
+        set
+        {
+            if (!value) return;
+            SelectedOutputType = OutputTypes.First(o => o.Value == GamepadOutputType.Xbox360);
+        }
+    }
+
+
+
+
     #endregion
 
     #region Properties - Anti-Recoil (SEMPLIFICATO, no weapon profiles)
@@ -639,6 +681,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
     public ICommand StopCommand { get; }
     public ICommand ResetToDefaultCommand { get; }
 
+    public ICommand SaveCommand { get; }
+
     #endregion
 
     #region Constructor
@@ -655,6 +699,10 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
         StartCommand = new RelayCommand(ExecuteStart, () => CanStart);
         StopCommand = new RelayCommand(ExecuteStop, () => CanStop);
         ResetToDefaultCommand = new RelayCommand(ExecuteResetToDefault);
+        SelectedOutputType = OutputTypes.First(o => o.Value == GamepadOutputType.DualShock4);
+        OnPropertyChanged(nameof(IsDs4Selected));
+        OnPropertyChanged(nameof(IsXboxSelected));
+
 
         AddLog("Pronto per l'avvio");
     }
@@ -671,7 +719,19 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
             StatusMessage = "Avvio in corso...";
 
             // ✅ AUTO-SAVE prima dell'avvio (garantisce che il backend usi config più recente)
+            
+            
             BackendService.SaveMacroConfiguration(_draftConfig);
+            
+            
+            _backend.OutputType = SelectedOutputType.Value;
+            AddLog($"Output selezionato: {SelectedOutputType.Name}");
+
+
+            _backend.OutputType = SelectedOutputType.Value;
+            AddLog($"[DBG] OutputType -> {_backend.OutputType}");
+
+
 
             await _backend.StartAsync();
 
@@ -751,6 +811,27 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
                 MessageBoxImage.Error);
         }
     }
+    private void ExecuteSave()
+    {
+        try
+        {
+            // Salva su disco
+            BackendService.SaveMacroConfiguration(_draftConfig);
+
+            // Se backend sta girando, hot-reload macro
+            if (IsRunning)
+                _backend.SaveAndReloadMacros(_draftConfig);
+
+            StatusMessage = "💾 Salvato";
+            AddLog("Config salvata manualmente (SAVE).");
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"❌ Errore SAVE: {ex.Message}";
+            AddLog($"ERRORE SAVE: {ex.Message}");
+        }
+    }
+
 
     #endregion
 
@@ -828,6 +909,19 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
             AddLog($"⚠️ ERRORE auto-save: {ex.Message}");
         }
     }
+
+    public sealed class OutputTypeOption
+    {
+        public string Name { get; }
+        public GamepadOutputType Value { get; }
+
+        public OutputTypeOption(string name, GamepadOutputType value)
+        {
+            Name = name;
+            Value = value;
+        }
+    }
+
 
     #endregion
 
