@@ -1,0 +1,16 @@
+﻿<Application x:Class="MacroWarzone.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="Views/MainWindow.xaml">
+
+	<Application.Resources>
+		<!-- Risorse globali (colori, stili, ecc.) -->
+
+		<SolidColorBrush x:Key="BackgroundDark" Color="#1E1E1E"/>
+		<SolidColorBrush x:Key="AccentCyan" Color="#00D9FF"/>
+		<SolidColorBrush x:Key="TextWhite" Color="White"/>
+		<SolidColorBrush x:Key="SuccessGreen" Color="#4CAF50"/>
+		<SolidColorBrush x:Key="ErrorRed" Color="#F44336"/>
+
+	</Application.Resources>
+</Application>

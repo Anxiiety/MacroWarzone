@@ -1,0 +1,54 @@
+{
+  "antiRecoil": {
+    "enabled": true,
+    "trigger": "R1",
+    "weaponProfiles": [
+      {
+        "name": "M15",
+        "recoilStrength": 0,
+        "horizontalBias": 0
+      },
+      {
+        "name": "REV",
+        "recoilStrength": 0,
+        "horizontalBias": 0
+      }
+    ],
+    "verticalBias": -1,
+    "smoothingTauMs": 25,
+    "rampUpMs": 120,
+    "rampDownMs": 80
+  },
+  "aimAssist": {
+    "enabled": true,
+    "activationTrigger": "L1\u002BR1",
+    "adsTrigger": "L2",
+    "rotationStrength": 0.2,
+    "rotationConeAngle": 35,
+    "strafeThreshold": 0.05,
+    "cameraThreshold": 0.08,
+    "targetMotionThreshold": 0.05,
+    "slowdownRadius": 0.25,
+    "slowdownStrength": 0.65,
+    "slowdownSmoothMs": 40,
+    "dragStrength": 0.3,
+    "dragRadius": 0.2,
+    "dragSmoothMs": 35,
+    "adsRotationMult": 0.7,
+    "adsDragMult": 1.6
+  },
+  "autoPing": {
+    "enabled": false,
+    "trigger": "L1\u002BR1",
+    "pingDurationMs": 0
+  },
+  "isUsingSniper": {
+    "enabled": false,
+    "trigger": "L1"
+  },
+  "rapidFire": {
+    "enabled": false,
+    "trigger": "R1",
+    "fireRateHz": 0
+  }
+}

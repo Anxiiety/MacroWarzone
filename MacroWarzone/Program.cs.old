@@ -1,0 +1,278 @@
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Text.Json;
+using MacroWarzone.License;
+
+namespace MacroWarzone;
+
+internal static class Program
+{
+    private const string ConfigPath = "profiles.json";
+    private const string MacroConfigPath = "macro_config.json";
+
+    public static int Main(string[] args)
+    {
+        try
+        {
+            #region Sistema di licenza (COMMENTATO - Da riabilitare in futuro)
+
+            // NOTA: Sistema di licenza temporaneamente disabilitato per branch di sviluppo
+            // Verrà riattivato nel branch principale con firma digitale completa
+
+            /*
+            var baseDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                "MyApp");
+
+            var keyPath = Path.Combine(baseDir, "license.key");
+
+            if (!File.Exists(keyPath))
+                throw new Exception("license.key mancante in C:\\ProgramData\\MyApp");
+
+            var key = File.ReadAllText(keyPath).Trim();
+            
+            var lic = LicenseKeyValidator.ValidateKeyOrThrow(
+                key,
+                PublicKey.Pem,
+                LocalProtection.HardwareFingerprint
+            );
+
+            LocalProtection.AntiClockCheck();
+            */
+
+            #endregion
+
+            RunApplication(args);
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"ERRORE CRITICO: {ex.Message}");
+            Console.ResetColor();
+
+            if (!System.Diagnostics.Debugger.IsAttached)
+            {
+                Console.WriteLine("\nPremi un tasto per uscire...");
+                Console.ReadKey();
+            }
+
+            return 1;
+        }
+    }
+
+    private static void RunApplication(string[] args)
+    {
+        Console.OutputEncoding = Encoding.UTF8;
+        Console.Title = "GhostStick - Macro Backend";
+
+        LaunchBackend();
+    }
+
+    private static void LaunchBackend()
+    {
+        Console.Clear();
+
+        #region Header veloce (nessuna animazione)
+
+        // DESIGN CHOICE: Nessun delay, boot istantaneo
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("╔════════════════════════════════════════════════════════╗");
+        Console.WriteLine("║              GHOSTSTICK - MACRO BACKEND               ║");
+        Console.WriteLine("╚════════════════════════════════════════════════════════╝");
+        Console.ResetColor();
+        Console.WriteLine();
+
+        #endregion
+
+        #region Initialization Checks (VELOCE)
+
+        Console.Write("[1/5] Config files... ");
+        if (!File.Exists(ConfigPath))
+        {
+            Error($"Missing {ConfigPath}");
+            return;
+        }
+        Success();
+
+        Console.Write("[2/5] Loading configuration... ");
+        ConfigRoot cfg;
+        GameProfile profile;
+        try
+        {
+            cfg = ConfigLoader.Load(ConfigPath);
+            profile = cfg.GetActiveProfile();
+            Success();
+        }
+        catch (Exception ex)
+        {
+            Error($"Config error: {ex.Message}");
+            return;
+        }
+
+        Console.Write("[3/5] Macro configuration... ");
+        MacroConfiguration macroConfig;
+        if (File.Exists(MacroConfigPath))
+        {
+            try
+            {
+                var json = File.ReadAllText(MacroConfigPath);
+                macroConfig = JsonSerializer.Deserialize<MacroConfiguration>(json) ?? new MacroConfiguration();
+                Success();
+            }
+            catch
+            {
+                macroConfig = new MacroConfiguration();
+                Success(" (defaults)");
+            }
+        }
+        else
+        {
+            macroConfig = new MacroConfiguration();
+            Success(" (defaults)");
+        }
+
+        Console.Write("[4/5] ViGEm Bus Driver... ");
+        ViGEmOutput vigem;
+        try
+        {
+            vigem = new ViGEmOutput();
+            vigem.Connect();
+            Success();
+        }
+        catch (Exception ex)
+        {
+            Error($"ViGEm not found. Install: https://github.com/nefarius/ViGEmBus/releases\nDetails: {ex.Message}");
+            return;
+        }
+
+        Console.Write($"[5/5] OSC receiver (port {cfg.OscPort})... ");
+        var raw = new RawInputState();
+        OscInputReceiver osc;
+        try
+        {
+            osc = new OscInputReceiver(cfg.OscPort, raw);
+            osc.Start();
+            Success();
+        }
+        catch (Exception ex)
+        {
+            Error($"OSC failed on port {cfg.OscPort}\nDetails: {ex.Message}");
+            vigem.Dispose();
+            return;
+        }
+
+        #endregion
+
+        #region Banner finale (veloce)
+
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(new string('═', 60));
+        Console.WriteLine("  ALL SYSTEMS ONLINE");
+        Console.WriteLine(new string('═', 60));
+        Console.ResetColor();
+        Console.WriteLine();
+
+        #endregion
+
+        #region Pipeline setup
+
+        double sampleRateHz = 1000.0 / cfg.TickMs;
+        var hipLeft = new StickProcessor(profile.Hip.Left, sampleRateHz);
+        var hipRight = new StickProcessor(profile.Hip.Right, sampleRateHz);
+        var adsLeft = new StickProcessor(profile.Ads.Left, sampleRateHz);
+        var adsRight = new StickProcessor(profile.Ads.Right, sampleRateHz);
+        var macros = MacroEngine.BuildRulesFromConfig(macroConfig);
+
+        DisplayMacroStatus(macroConfig);
+
+        var loop = new OutputLoop(cfg, profile, raw, vigem,
+            hipLeft, hipRight, adsLeft, adsRight, macros);
+
+        Console.CancelKeyPress += (_, e) =>
+        {
+            e.Cancel = true;
+            loop.Stop();
+        };
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("Running... Press Ctrl+C to stop.\n");
+        Console.ResetColor();
+
+        loop.Run();
+
+        #endregion
+    }
+
+    private static void DisplayMacroStatus(MacroConfiguration config)
+    {
+        #region Header stato macro
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("╔═══════════════════════════════════════════════════════╗");
+        Console.WriteLine("║                   MACRO STATUS                        ║");
+        Console.WriteLine("╚═══════════════════════════════════════════════════════╝");
+        Console.ResetColor();
+        Console.WriteLine();
+
+        #endregion
+
+        #region Lista macro (solo Verde/Rosso)
+
+        // DESIGN CHOICE: Solo colori semantici (Verde=ON, Rosso=OFF)
+        // Nessun arcobaleno = massima chiarezza per operatori
+
+        PrintMacro("Anti-Recoil", config.AntiRecoil.Enabled);
+        PrintMacro("Aim Assist", config.AimAssist.Enabled);
+        PrintMacro("Return to Center", config.ReturnToCenter.Enabled);
+        PrintMacro("Jump Diving", config.JumpDiving.Enabled);
+        PrintMacro("Left Stick Path", config.LeftStickPath.Enabled);
+        PrintMacro("Hold Breath (Sniper)", config.IsUsingSniper.Enabled);
+        PrintMacro("Auto Ping", config.AutoPing.Enabled);
+
+        Console.WriteLine();
+
+        #endregion
+    }
+
+    private static void PrintMacro(string name, bool enabled)
+    {
+        // DESIGN CHOICE:
+        // - Nome in bianco (default console)
+        // - Stato in Verde/Rosso (semantica universale)
+
+        Console.Write($"  {name,-25} ");
+
+        if (enabled)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("ENABLED");
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("DISABLED");
+        }
+
+        Console.ResetColor();
+    }
+
+    private static void Success(string extra = "")
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"✓{extra}");
+        Console.ResetColor();
+    }
+
+    private static void Error(string message)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("✗");
+        Console.ResetColor();
+        Console.WriteLine($"\nERROR: {message}");
+        Console.WriteLine("\nPress any key to exit...");
+        Console.ReadKey();
+    }
+}

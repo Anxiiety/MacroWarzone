@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Assets\AnxietyLogo.ico</ApplicationIcon>
+    <AssemblyTitle>1.0.0.1</AssemblyTitle>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="bin\Debug\net10.0\Assets\**" />
+    <Compile Remove="bin\Debug\net8.0-windows\Assets\**" />
+    <Compile Remove="bin\Release\net10.0\Assets\**" />
+    <Compile Remove="bin\Release\net8.0-windows\Assets\**" />
+    <EmbeddedResource Remove="bin\Debug\net10.0\Assets\**" />
+    <EmbeddedResource Remove="bin\Debug\net8.0-windows\Assets\**" />
+    <EmbeddedResource Remove="bin\Release\net10.0\Assets\**" />
+    <EmbeddedResource Remove="bin\Release\net8.0-windows\Assets\**" />
+    <None Remove="bin\Debug\net10.0\Assets\**" />
+    <None Remove="bin\Debug\net8.0-windows\Assets\**" />
+    <None Remove="bin\Release\net10.0\Assets\**" />
+    <None Remove="bin\Release\net8.0-windows\Assets\**" />
+    <Page Remove="bin\Debug\net10.0\Assets\**" />
+    <Page Remove="bin\Debug\net8.0-windows\Assets\**" />
+    <Page Remove="bin\Release\net10.0\Assets\**" />
+    <Page Remove="bin\Release\net8.0-windows\Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\AnxietyLogo.ico" />
+    <None Remove="Assets\gradient_background_a_3_24.jpg" />
+    <None Remove="Assets\iridescent-texture-background.jpg" />
+    <None Remove="Program.cs.old" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
+    <PackageReference Include="Rug.Osc" Version="1.2.5" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <!-- Se serve davvero, ok. Se restore rompe, la togliamo o la allineiamo -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="bin\Debug\net10.0\" />
+    <Folder Include="bin\Debug\net8.0-windows\" />
+    <Folder Include="bin\Release\net10.0\" />
+    <Folder Include="bin\Release\net8.0-windows\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\AnxietyLogo.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\gradient_background_a_3_24.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\iridescent-texture-background.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>
