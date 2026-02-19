@@ -24,6 +24,13 @@ namespace MacroWarzone.Services;
 /// </summary>
 public class BackendService : IDisposable
 {
+    public BackendService()
+    {
+        App.BeforeAppExit += OnAppExit;
+    }
+
+
+
     #region Events
 
     public event EventHandler<string>? StatusChanged;
@@ -64,6 +71,34 @@ public class BackendService : IDisposable
     #endregion
 
     #region Lifecycle
+
+    private void OnAppExit()
+    {
+        try
+        {
+            // Evita deadlock: non bloccare UI thread aspettando async in modo stupido.
+            // Qui facciamo uno stop "best effort" e stoppiamo tutto.
+            StopAsync().GetAwaiter().GetResult();
+        }
+        catch
+        {
+            // In uscita non voglio drammi: se qualcosa fallisce, comunque stiamo chiudendo.
+            try
+            {
+                _loop?.Stop();
+            }
+            catch { }
+
+            try
+            {
+                _cts?.Cancel();
+            }
+            catch { }
+
+            try { _osc?.Dispose(); } catch { }
+            try { _vigem?.Dispose(); } catch { }
+        }
+    }
 
     public async Task StartAsync()
     {
@@ -123,7 +158,7 @@ public class BackendService : IDisposable
             }, _cts.Token);
 
             lock (_lock) _isRunning = true;
-            RaiseStatus("✅ Backend attivo");
+            RaiseStatus("Backend attivo");
         }
         catch (Exception ex)
         {
@@ -138,6 +173,7 @@ public class BackendService : IDisposable
         lock (_lock)
         {
             if (!_isRunning) return;
+            _isRunning = false; // <-- set subito, così Stop è idempotente
         }
 
         try
@@ -161,7 +197,6 @@ public class BackendService : IDisposable
             _cts = null;
             _loop = null;
 
-            lock (_lock) _isRunning = false;
             RaiseStatus("Backend fermato");
         }
         catch (Exception ex)
@@ -171,7 +206,11 @@ public class BackendService : IDisposable
         }
     }
 
-    public void Dispose() => StopAsync().GetAwaiter().GetResult();
+    public void Dispose()
+    {
+        App.BeforeAppExit -= OnAppExit;
+        StopAsync().GetAwaiter().GetResult();
+    }
 
     #endregion
 
@@ -206,11 +245,11 @@ public class BackendService : IDisposable
             {
                 var newMacros = MacroEngine.BuildRulesFromConfig(draftConfig);
                 _loop.ReloadMacros(newMacros);
-                RaiseStatus("✅ Macro ricaricate (hot-reload)");
+                RaiseStatus("Macro ricaricate (hot-reload)");
             }
             else
             {
-                RaiseStatus("✅ Configurazione salvata (ricaricata al prossimo Start)");
+                RaiseStatus(" Configurazione salvata (ricaricata al prossimo Start)");
             }
         }
         catch (Exception ex)
@@ -228,13 +267,13 @@ public class BackendService : IDisposable
     {
         if (!File.Exists(ProfilesPath))
         {
-            Debug.WriteLine($"[BOOTSTRAP] {ProfilesPath} non trovato → creazione default");
+            
             WriteProfilesDefault();
         }
 
         if (!File.Exists(MacroDefaultPath))
         {
-            Debug.WriteLine($"[BOOTSTRAP] {MacroDefaultPath} non trovato → creazione default");
+           
             WriteMacroDefault(MacroDefaultPath);
         }
     }
@@ -247,7 +286,7 @@ public class BackendService : IDisposable
     {
         if (!File.Exists(ProfilesPath))
         {
-            Debug.WriteLine($"[LOAD] {ProfilesPath} mancante, creazione default");
+            
             WriteProfilesDefault();
         }
 
@@ -267,8 +306,7 @@ public class BackendService : IDisposable
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"[RECOVERY] profiles.json corrotto: {ex.Message}");
-            Debug.WriteLine($"[RECOVERY] Sovrascrittura con default (backup in .bak)");
+          
 
             try { File.Copy(ProfilesPath, ProfilesPath + ".bak", overwrite: true); }
             catch { }
@@ -300,13 +338,13 @@ public class BackendService : IDisposable
                 if (config != null)
                 {
                     EnsureConfigInvariant(config);
-                    Debug.WriteLine($"[LOAD] Config caricata da {MacroCustomPath}");
+                 
                     return config;
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[WARNING] {MacroCustomPath} corrotto ({ex.Message}) → uso default");
+               
             }
         }
 
@@ -321,18 +359,18 @@ public class BackendService : IDisposable
                 if (config != null)
                 {
                     EnsureConfigInvariant(config);
-                    Debug.WriteLine($"[LOAD] Config caricata da {MacroDefaultPath}");
+           
                     return config;
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[WARNING] {MacroDefaultPath} corrotto ({ex.Message}) → rigenero");
+             
             }
         }
 
         // Fallback: crea da zero
-        Debug.WriteLine("[BOOTSTRAP] Nessun file macro trovato → creazione da zero");
+       
         var freshConfig = CreateFreshMacroConfig();
         EnsureConfigInvariant(freshConfig);
 
@@ -393,13 +431,13 @@ public class BackendService : IDisposable
                 {
                     Hip = new ResponseSet
                     {
-                        Left = new AxisConfig { Deadzone = 0.05, Expo = 0.0 },
-                        Right = new AxisConfig { Deadzone = 0.05, Expo = 0.10 }
+                        Left = new AxisConfig { Deadzone = 0.00, Expo = 0.0 },
+                        Right = new AxisConfig { Deadzone = 0.00, Expo = 0.10 }
                     },
                     Ads = new ResponseSet
                     {
-                        Left = new AxisConfig { Deadzone = 0.04, Expo = 0.0 },
-                        Right = new AxisConfig { Deadzone = 0.04, Expo = 0.15 }
+                        Left = new AxisConfig { Deadzone = 0.00, Expo = 0.0 },
+                        Right = new AxisConfig { Deadzone = 0.00, Expo = 0.15 }
                     },
                     Activation = new ActivationConfig
                     {
@@ -418,7 +456,7 @@ public class BackendService : IDisposable
         });
 
         File.WriteAllText(ProfilesPath, json);
-        Debug.WriteLine($"[WRITE] {ProfilesPath} scritto");
+       
     }
 
     private static void WriteMacroDefault(string path)
@@ -433,7 +471,7 @@ public class BackendService : IDisposable
         });
 
         File.WriteAllText(path, json);
-        Debug.WriteLine($"[WRITE] {path} scritto");
+       
     }
 
     /// <summary>
@@ -507,7 +545,7 @@ public class BackendService : IDisposable
             {
                 Enabled = false,
                 Trigger = "R1",
-                FireRateHz = 15
+                FireRateHz = 5
             }
         };
     }

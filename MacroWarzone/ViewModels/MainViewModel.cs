@@ -7,6 +7,7 @@ using System.Windows.Input;
 using MacroWarzone.Services;
 using MacroWarzone.Macros;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace MacroWarzone.ViewModels;
 
@@ -117,7 +118,9 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
 
     #endregion
 
-    #region Properties - Anti-Recoil (SEMPLIFICATO, no weapon profiles)
+    // ✅ SOSTITUISCI LA REGION "Properties - Anti-Recoil" con questa:
+
+    #region Properties - Anti-Recoil (con prefisso per matching XAML)
 
     public bool AntiRecoilEnabled
     {
@@ -133,8 +136,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
         }
     }
 
-    // ✅ AGGIUNTE property mancanti: RecoilStrength, HorizontalBias
-    public double RecoilStrength
+    // ✅ RINOMINATA: RecoilStrength → AntiRecoilStrength
+    public double AntiRecoilStrength
     {
         get => _draftConfig.AntiRecoil.RecoilStrength;
         set
@@ -149,7 +152,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
         }
     }
 
-    public double HorizontalBias
+    // ✅ RINOMINATA: HorizontalBias → AntiRecoilHorizontalBias
+    public double AntiRecoilHorizontalBias
     {
         get => _draftConfig.AntiRecoil.HorizontalBias;
         set
@@ -164,7 +168,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
         }
     }
 
-    public double VerticalBias
+    // ✅ RINOMINATA: VerticalBias → AntiRecoilVerticalBias
+    public double AntiRecoilVerticalBias
     {
         get => _draftConfig.AntiRecoil.VerticalBias;
         set
@@ -179,7 +184,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
         }
     }
 
-    public double SmoothingTauMs
+    // ✅ RINOMINATA: SmoothingTauMs → AntiRecoilSmoothingTauMs
+    public double AntiRecoilSmoothingTauMs
     {
         get => _draftConfig.AntiRecoil.SmoothingTauMs;
         set
@@ -194,7 +200,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
         }
     }
 
-    public int RampUpMs
+    // ✅ RINOMINATA: RampUpMs → AntiRecoilRampUpMs
+    public int AntiRecoilRampUpMs
     {
         get => _draftConfig.AntiRecoil.RampUpMs;
         set
@@ -209,7 +216,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
         }
     }
 
-    public int RampDownMs
+    // ✅ RINOMINATA: RampDownMs → AntiRecoilRampDownMs
+    public int AntiRecoilRampDownMs
     {
         get => _draftConfig.AntiRecoil.RampDownMs;
         set
@@ -747,8 +755,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
             MessageBox.Show(
                 $"Impossibile avviare il backend:\n{ex.Message}",
                 "Errore",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+                (MessageBoxButtons)MessageBoxButton.OK,
+                (MessageBoxIcon)MessageBoxImage.Error);
         }
     }
 
@@ -777,10 +785,10 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
         var result = MessageBox.Show(
             "Ripristinare la configurazione di default?\nTutte le modifiche personalizzate verranno perse.",
             "Conferma",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question);
+            (MessageBoxButtons)MessageBoxButton.YesNo,
+            (MessageBoxIcon)MessageBoxImage.Question);
 
-        if (result != MessageBoxResult.Yes)
+        if ((MessageBoxResult)result != MessageBoxResult.Yes)
             return;
 
         try
@@ -797,8 +805,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
             MessageBox.Show(
                 "Configurazione ripristinata ai valori di default!",
                 "Successo",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+                (MessageBoxButtons)MessageBoxButton.OK,
+                (MessageBoxIcon)MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
@@ -807,8 +815,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
             MessageBox.Show(
                 $"Impossibile ripristinare la configurazione:\n{ex.Message}",
                 "Errore",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+                (MessageBoxButtons)MessageBoxButton.OK,
+                (MessageBoxIcon)MessageBoxImage.Error);
         }
     }
     private void ExecuteSave()
@@ -839,7 +847,7 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
 
     private void OnBackendStatusChanged(object? sender, string status)
     {
-        Application.Current.Dispatcher.Invoke(() =>
+        System.Windows.Application.Current.Dispatcher.Invoke(() =>
         {
             StatusMessage = status;
             AddLog(status);
@@ -848,7 +856,7 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
 
     private void OnBackendError(object? sender, Exception ex)
     {
-        Application.Current.Dispatcher.Invoke(() =>
+        System.Windows.Application.Current.Dispatcher.Invoke(() =>
         {
             AddLog($"ERRORE BACKEND: {ex.Message}");
             StatusMessage = $"❌ Errore: {ex.Message}";
@@ -857,8 +865,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
             MessageBox.Show(
                 $"Errore critico del backend:\n{ex.Message}",
                 "Errore Backend",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+                (System.Windows.Forms.MessageBoxButtons)System.Windows.MessageBoxButton.OK,
+                (System.Windows.Forms.MessageBoxIcon)System.Windows.MessageBoxImage.Error);
         });
     }
 
