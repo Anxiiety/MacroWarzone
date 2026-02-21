@@ -35,11 +35,13 @@ public sealed class ViGEmOutput : IGamepadOutput
         // === STICK ANALOGICI ===
         // DS4 in ViGEm 1.21.x usa byte (0-255, centro a 128).
         // Conversione: [-1.0, +1.0] -> [0, 255], con 0.0 -> 128.
-        _pad.SetAxisValue(DualShock4Axis.LeftThumbX, NormalizedToByte(o.LeftX));
-        _pad.SetAxisValue(DualShock4Axis.LeftThumbY, NormalizedToByte(o.LeftY));
-        _pad.SetAxisValue(DualShock4Axis.RightThumbX, NormalizedToByte(o.RightX));
-        _pad.SetAxisValue(DualShock4Axis.RightThumbY, NormalizedToByte(o.RightY));
 
+        // Se gli analogici sono al contrarrio, invertiamo l'asse Y (perché in molti giochi Y positivo è verso il basso).
+
+        _pad.SetAxisValue(DualShock4Axis.LeftThumbX, NormalizedToByte(o.LeftX));
+        _pad.SetAxisValue(DualShock4Axis.LeftThumbY, NormalizedToByte(-o.LeftY));
+        _pad.SetAxisValue(DualShock4Axis.RightThumbX, NormalizedToByte(o.RightX));
+        _pad.SetAxisValue(DualShock4Axis.RightThumbY, NormalizedToByte(-o.RightY));
         _pad.SetSliderValue(DualShock4Slider.LeftTrigger, o.L2);
         _pad.SetSliderValue(DualShock4Slider.RightTrigger, o.R2);
 

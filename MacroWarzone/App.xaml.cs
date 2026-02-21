@@ -110,8 +110,8 @@ public partial class App : WpfApp
     {
         try
         {
-            // Serve che Assets/Nexus.ico sia Build Action = Resource
-            var uri = new Uri("pack://application:,,,/Assets/Nexus.ico", UriKind.Absolute);
+            // Serve che Assets/Nexus12.ico sia Build Action = Resource
+            var uri = new Uri("pack://application:,,,/Assets/Nexus12.ico", UriKind.Absolute);
             StreamResourceInfo? sri = GetResourceStream(uri);
 
             if (sri?.Stream is null)

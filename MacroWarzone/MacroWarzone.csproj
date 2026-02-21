@@ -7,7 +7,7 @@
 	<UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>Assets\Nexus.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\Nexus12.ico</ApplicationIcon>
     <AssemblyTitle>1.1.0.2</AssemblyTitle>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
@@ -37,6 +37,7 @@
     <None Remove="Assets\gradient_background_a_3_24.jpg" />
     <None Remove="Assets\iridescent-texture-background.jpg" />
     <None Remove="Assets\Nexus.ico" />
+    <None Remove="Assets\Nexus12.ico" />
     <None Remove="Program.cs.old" />
   </ItemGroup>
 
@@ -51,12 +52,6 @@
       <VersionMajor>2</VersionMajor>
       <Guid>215d64d2-031c-33c7-96e3-61794cd1ee61</Guid>
     </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Assets\Nexus.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -88,6 +83,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\iridescent-texture-background.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Nexus12.ico">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

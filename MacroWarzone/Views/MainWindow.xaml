@@ -8,7 +8,7 @@
         Background="#0A0E27"
         ResizeMode="CanResize"
         WindowState="Maximized"
-        Icon="pack://application:,,,/Assets/Nexus.ico">
+        Icon="pack://application:,,,/Assets/Nexus12.ico">
 
     <Window.DataContext>
         <vm:MainViewModel/>
@@ -21,7 +21,7 @@
 
         <!-- ==================== COLORI ==================== -->
         <SolidColorBrush x:Key="BackgroundDark" Color="#0A0E27"/>
-        
+
         <LinearGradientBrush x:Key="CardBackground" StartPoint="0,0" EndPoint="1,1">
             <!-- Viola scuro elegante -->
             <GradientStop Color="#1A1B3A" Offset="0.0"/>
@@ -746,13 +746,13 @@
             Height="45"
             Margin="0,0,20,0"
             Style="{StaticResource BlueButton}"/>
-            
+
             <RadioButton Content="DualShock 4" Style="{StaticResource ControllerTypeRadioButton}"
                             GroupName="OutputType"
                             Foreground="White"
                             Margin="0,0,15,0"
                             IsChecked="{Binding IsDs4Selected, Mode=TwoWay}"/>
-            
+
             <RadioButton Content="Xbox 360   " Style="{StaticResource ControllerTypeRadioButton}"
                              GroupName="OutputType"
                              Foreground="White"
@@ -824,20 +824,22 @@
                                     </Grid.RowDefinitions>
 
                                     <!-- Recoil Strength -->
-                                    <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="Strength"
-                                   Style="{StaticResource ParamLabelStyle}"
-                                   Margin="0,0,10,0"/>
+
+                                    <TextBlock Grid.Column="0"
+                                                Text="Strength"
+                                                Style="{StaticResource ParamLabelStyle}" 
+                                               Grid.ColumnSpan="2" 
+                                               Margin="0,0,0 ,0"/>
 
                                     <Slider Grid.Row="0" Grid.Column="2"
-                        Value="{Binding AntiRecoilStrength}"
-                        Minimum="0" Maximum="1.5"
-                        TickFrequency="0.01"
-                        Style="{StaticResource MacroSlider}" Margin="10,12,10,12"/>
+                                            Value="{Binding AntiRecoilStrength}"
+                                            Minimum="0" Maximum="1.5"
+                                            TickFrequency="0.01"
+                                            Style="{StaticResource MacroSlider}" Margin="10,12,10,12"/>
 
                                     <TextBlock Grid.Column="3"
-                           Text="{Binding AntiRecoilStrength, StringFormat={}{0:F2}}"
-                           Style="{StaticResource ParamValueStyle}"/>
+                                               Text="{Binding AntiRecoilStrength, StringFormat={}{0:F2}}"
+                                               Style="{StaticResource ParamValueStyle}"/>
 
                                     <!-- Vertical Bias -->
                                     <TextBlock Grid.Row="1" Grid.Column="0"
@@ -846,8 +848,8 @@
 
                                     <Slider Grid.Row="1" Grid.Column="2"
                         Value="{Binding AntiRecoilVerticalBias}"
-                        Minimum="-1" Maximum="1"
-                        TickFrequency="0.01"
+                                            Minimum="-1" Maximum="1"
+                                            TickFrequency="0.01"
                         Style="{StaticResource MacroSlider}" Margin="10,12,10,12"/>
 
                                     <TextBlock Grid.Row="1" Grid.Column="3"
@@ -1373,7 +1375,7 @@
                                     <ColumnDefinition Width="60"/>
                                 </Grid.ColumnDefinitions>
 
-                                
+
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -1389,7 +1391,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="60"/>
                                 </Grid.ColumnDefinitions>
-                                
+
                             </Grid>
                         </StackPanel>
                     </Border>
