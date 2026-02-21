@@ -776,6 +776,61 @@
             <ScrollViewer Grid.Column="0" Margin="0,0,15,0" RenderTransform="{StaticResource UiScale}">
                 <StackPanel>
 
+                    <!-- ==================== REALTIME ADAPTIVE ANTI-RECOIL ==================== -->
+                    <Expander IsExpanded="False" Margin="0,15,0,0">
+                        <Expander.Header>
+                            <Grid>
+                                <CheckBox Content="🧠 REALTIME ADAPTIVE ANTI-RECOIL"
+                                          IsChecked="{Binding RealtimeAntiRecoilEnabled}"
+                                          Style="{StaticResource MacroCheckBox}"
+                                          FontSize="18"
+                                          Margin="0"/>
+                            </Grid>
+                        </Expander.Header>
+
+                        <StackPanel IsEnabled="{Binding RealtimeAntiRecoilEnabled}">
+                            <TextBlock Text="Adaptive Parameters"
+                                       Style="{StaticResource SectionHeaderStyle}"
+                                       FontSize="14"
+                                       Margin="30,5,0,5"/>
+
+                            <Grid Margin="30,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="170"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="70"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Adaptive Strength" Style="{StaticResource ParamLabelStyle}"/>
+                                <Slider Grid.Row="0" Grid.Column="1" Value="{Binding AdaptiveStrength}" Minimum="0.5" Maximum="1.5" TickFrequency="0.01" Style="{StaticResource MacroSlider}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding AdaptiveStrength, StringFormat={}{0:F2}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Learning Rate" Style="{StaticResource ParamLabelStyle}"/>
+                                <Slider Grid.Row="1" Grid.Column="1" Value="{Binding LearningRate}" Minimum="0.1" Maximum="0.5" TickFrequency="0.01" Style="{StaticResource MacroSlider}"/>
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding LearningRate, StringFormat={}{0:F2}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Buffer Size" Style="{StaticResource ParamLabelStyle}"/>
+                                <Slider Grid.Row="2" Grid.Column="1" Value="{Binding BufferSize}" Minimum="50" Maximum="200" TickFrequency="1" Style="{StaticResource MacroSlider}"/>
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding BufferSize, StringFormat={}{0:F0}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Min Samples" Style="{StaticResource ParamLabelStyle}"/>
+                                <Slider Grid.Row="3" Grid.Column="1" Value="{Binding MinSamplesForLearning}" Minimum="5" Maximum="20" TickFrequency="1" Style="{StaticResource MacroSlider}"/>
+                                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding MinSamplesForLearning, StringFormat={}{0:F0}}" Style="{StaticResource ParamValueStyle}"/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Pattern Lock Threshold" Style="{StaticResource ParamLabelStyle}"/>
+                                <Slider Grid.Row="4" Grid.Column="1" Value="{Binding PatternLockThreshold}" Minimum="10" Maximum="30" TickFrequency="1" Style="{StaticResource MacroSlider}"/>
+                                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding PatternLockThreshold, StringFormat={}{0:F0}}" Style="{StaticResource ParamValueStyle}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Expander>
+
                     <!-- ==================== ANTI-RECOIL (NO WEAPON) ==================== -->
                     <Expander  IsExpanded="False" Margin="0,15,0,0">
                         <Expander.Header>

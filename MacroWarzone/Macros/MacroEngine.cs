@@ -10,7 +10,19 @@ public static class MacroEngine
     {
         var rules = new List<IMacroRule>();
 
-        if (config.AntiRecoil?.Enabled == true)
+        if (config.RealtimeAntiRecoil?.Enabled == true)
+        {
+            var cfg = config.RealtimeAntiRecoil;
+            rules.Add(new RealtimeAntiRecoilRule(
+                fireCondition: MacroTriggerParser.ParseTrigger(cfg.Trigger),
+                adaptiveStrength: cfg.AdaptiveStrength,
+                learningRate: cfg.LearningRate,
+                bufferSize: cfg.BufferSize,
+                minSamplesForLearning: cfg.MinSamplesForLearning,
+                patternLockThreshold: cfg.PatternLockThreshold
+            ));
+        }
+        else if (config.AntiRecoil?.Enabled == true)
         {
             var cfg = config.AntiRecoil;
             rules.Add(new AntiRecoilRule(

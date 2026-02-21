@@ -234,6 +234,99 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
 
     #endregion
 
+    #region Properties - Realtime Anti-Recoil
+
+    public bool RealtimeAntiRecoilEnabled
+    {
+        get => _draftConfig.RealtimeAntiRecoil.Enabled;
+        set
+        {
+            if (_draftConfig.RealtimeAntiRecoil.Enabled != value)
+            {
+                _draftConfig.RealtimeAntiRecoil.Enabled = value;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public double AdaptiveStrength
+    {
+        get => _draftConfig.RealtimeAntiRecoil.AdaptiveStrength;
+        set
+        {
+            var clamped = Math.Clamp(value, 0.5, 1.5);
+            if (Math.Abs(_draftConfig.RealtimeAntiRecoil.AdaptiveStrength - clamped) > 0.001)
+            {
+                _draftConfig.RealtimeAntiRecoil.AdaptiveStrength = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public double LearningRate
+    {
+        get => _draftConfig.RealtimeAntiRecoil.LearningRate;
+        set
+        {
+            var clamped = Math.Clamp(value, 0.1, 0.5);
+            if (Math.Abs(_draftConfig.RealtimeAntiRecoil.LearningRate - clamped) > 0.001)
+            {
+                _draftConfig.RealtimeAntiRecoil.LearningRate = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public int BufferSize
+    {
+        get => _draftConfig.RealtimeAntiRecoil.BufferSize;
+        set
+        {
+            var clamped = Math.Clamp(value, 50, 200);
+            if (_draftConfig.RealtimeAntiRecoil.BufferSize != clamped)
+            {
+                _draftConfig.RealtimeAntiRecoil.BufferSize = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public int MinSamplesForLearning
+    {
+        get => _draftConfig.RealtimeAntiRecoil.MinSamplesForLearning;
+        set
+        {
+            var clamped = Math.Clamp(value, 5, 20);
+            if (_draftConfig.RealtimeAntiRecoil.MinSamplesForLearning != clamped)
+            {
+                _draftConfig.RealtimeAntiRecoil.MinSamplesForLearning = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public int PatternLockThreshold
+    {
+        get => _draftConfig.RealtimeAntiRecoil.PatternLockThreshold;
+        set
+        {
+            var clamped = Math.Clamp(value, 10, 30);
+            if (_draftConfig.RealtimeAntiRecoil.PatternLockThreshold != clamped)
+            {
+                _draftConfig.RealtimeAntiRecoil.PatternLockThreshold = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    #endregion
+
     #region Properties - Aim Assist
 
     public bool AimAssistEnabled
