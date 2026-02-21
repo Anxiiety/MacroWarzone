@@ -36,7 +36,6 @@ namespace MacroWarzone;
 
     public sealed class ActivationConfig
     {
-        public int AdsWhenR2Above { get; set; } = 20;
         public double MinIntentMagnitude { get; set; } = 0.02;
         public byte TriggerNoiseThreshold { get; set; } = 3;
     }
