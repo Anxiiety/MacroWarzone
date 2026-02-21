@@ -441,7 +441,6 @@ public class BackendService : IDisposable
                     },
                     Activation = new ActivationConfig
                     {
-                        AdsWhenR2Above = 20,
                         MinIntentMagnitude = 0.02,
                         TriggerNoiseThreshold = 3
                     }

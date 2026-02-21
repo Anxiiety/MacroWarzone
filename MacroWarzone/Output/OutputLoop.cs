@@ -93,15 +93,16 @@ public sealed class OutputLoop
             long dt = (prevTs == 0) ? 0 : (ts - prevTs);
             prevTs = ts;
 
-            // ===== 2. TRIGGER NOISE + ADS =====
+            // ===== 2. TRIGGER NOISE =====
             byte l2 = ActivationModel.ApplyTriggerNoise(s.L2, _profile.Activation);
             byte r2 = ActivationModel.ApplyTriggerNoise(s.R2, _profile.Activation);
 
-            bool isAds = ActivationModel.IsAds(r2, _profile.Activation);
-
-            var set = isAds ? _profile.Ads : _profile.Hip;
-            var leftProc = isAds ? _adsLeft : _hipLeft;
-            var rightProc = isAds ? _adsRight : _hipRight;
+            // NOTE:
+            // Non esiste più una logica che cambia sensibilità/camera in base alla pressione di R2.
+            // La pipeline usa sempre il profilo HIP; ADS può essere gestito solo dalle macro dedicate.
+            var set = _profile.Hip;
+            var leftProc = _hipLeft;
+            var rightProc = _hipRight;
 
             // ===== 3. NORMALIZE =====
             double lx = AxisMath.NormalizeAxis(s.Lx);
