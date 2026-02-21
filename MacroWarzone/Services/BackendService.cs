@@ -555,6 +555,7 @@ public class BackendService : IDisposable
 
     public static void EnsureConfigInvariant(MacroConfiguration cfg)
     {
+        cfg.RealtimeAntiRecoil ??= new RealtimeAntiRecoilConfig();
         cfg.AntiRecoil ??= new AntiRecoilConfig();
         cfg.AimAssist ??= new AimAssistConfig();
         cfg.ZenCronusAimAssist ??= new ZenCronusAimAssistConfig();

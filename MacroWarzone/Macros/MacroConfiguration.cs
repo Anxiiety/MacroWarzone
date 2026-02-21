@@ -10,6 +10,7 @@ namespace MacroWarzone;
 /// </summary>
 public sealed class MacroConfiguration
 {
+    public RealtimeAntiRecoilConfig RealtimeAntiRecoil { get; set; } = new();
     public AntiRecoilConfig AntiRecoil { get; set; } = new();
     public AimAssistConfig AimAssist { get; set; } = new();
 
@@ -17,6 +18,22 @@ public sealed class MacroConfiguration
     public AutoPingConfig AutoPing { get; set; } = new();
     public IsUsingSniperConfig IsUsingSniper { get; set; } = new();
     public RapidFireConfig RapidFire { get; set; } = new();
+}
+
+// ============================================================================
+// REALTIME ADAPTIVE ANTI-RECOIL
+// ============================================================================
+public sealed class RealtimeAntiRecoilConfig
+{
+    public bool Enabled { get; set; } = false;
+
+    public string Trigger { get; set; } = "R1";
+
+    public double AdaptiveStrength { get; set; } = 1.0;
+    public double LearningRate { get; set; } = 0.3;
+    public int BufferSize { get; set; } = 100;
+    public int MinSamplesForLearning { get; set; } = 10;
+    public int PatternLockThreshold { get; set; } = 15;
 }
 
 // ============================================================================
