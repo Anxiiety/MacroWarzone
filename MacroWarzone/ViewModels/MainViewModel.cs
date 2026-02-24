@@ -730,6 +730,84 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged, I
 
     #endregion
 
+    #region Properties - AI Vision Aim Assist
+
+    public bool AIVisionAimAssistEnabled
+    {
+        get => _draftConfig.AIVisionAimAssist.Enabled;
+        set
+        {
+            if (_draftConfig.AIVisionAimAssist.Enabled != value)
+            {
+                _draftConfig.AIVisionAimAssist.Enabled = value;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public double AIAssistStrength
+    {
+        get => _draftConfig.AIVisionAimAssist.AssistStrength;
+        set
+        {
+            var clamped = Math.Clamp(value, 0.0, 1.0);
+            if (Math.Abs(_draftConfig.AIVisionAimAssist.AssistStrength - clamped) > 0.001)
+            {
+                _draftConfig.AIVisionAimAssist.AssistStrength = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public double AISmoothingMs
+    {
+        get => _draftConfig.AIVisionAimAssist.SmoothingMs;
+        set
+        {
+            var clamped = Math.Clamp(value, 10.0, 200.0);
+            if (Math.Abs(_draftConfig.AIVisionAimAssist.SmoothingMs - clamped) > 0.1)
+            {
+                _draftConfig.AIVisionAimAssist.SmoothingMs = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public double AIMaxRotationSpeed
+    {
+        get => _draftConfig.AIVisionAimAssist.MaxRotationSpeed;
+        set
+        {
+            var clamped = Math.Clamp(value, 60.0, 360.0);
+            if (Math.Abs(_draftConfig.AIVisionAimAssist.MaxRotationSpeed - clamped) > 1.0)
+            {
+                _draftConfig.AIVisionAimAssist.MaxRotationSpeed = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    public int AIReactionDelayMs
+    {
+        get => _draftConfig.AIVisionAimAssist.ReactionDelayMs;
+        set
+        {
+            var clamped = Math.Clamp(value, 0, 300);
+            if (_draftConfig.AIVisionAimAssist.ReactionDelayMs != clamped)
+            {
+                _draftConfig.AIVisionAimAssist.ReactionDelayMs = clamped;
+                OnPropertyChanged();
+                AutoSaveAndReload();
+            }
+        }
+    }
+
+    #endregion
+
     #region Properties - Auto Ping, Sniper, Rapid Fire
 
     public bool AutoPingEnabled

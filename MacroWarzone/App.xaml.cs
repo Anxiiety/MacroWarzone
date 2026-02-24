@@ -8,10 +8,6 @@ using System.Windows.Threading;
 using WpfApp = System.Windows.Application;
 using WpfMessageBox = System.Windows.MessageBox;
 
-// WinForms tray
-using System.Drawing;
-using System.Windows.Forms;
-
 namespace MacroWarzone;
 
 public partial class App : WpfApp

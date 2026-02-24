@@ -1,4 +1,5 @@
 ﻿using MacroWarzone.Macros;
+using MacroWarzone.Vision;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -147,7 +148,34 @@ public class BackendService : IDisposable
             _loop = new OutputLoop(cfg, profile, raw, _vigem,
                 hipLeft, hipRight, adsLeft, adsRight, macros, macroConfig);
 
-            // ❌ NESSUN WeaponSwitched event (rimosso)
+            // TEST SCREEN CAPTURE (non blocca se fallisce, ma è utile per debug e per escludere problemi DirectX)
+
+            var capture = new ScreenCaptureService();
+            if (capture.Initialize())
+            {
+                Debug.WriteLine("✓ Screen Capture OK");
+
+                using var testFrame = capture.CaptureFrame();
+                if (testFrame != null)
+                {
+                    Debug.WriteLine($"✓ Captured frame: {testFrame.Width}x{testFrame.Height}");
+                }
+            }
+
+            //test weapon detected 
+            var weaponDetect = new WeaponDetectionService();
+            if (weaponDetect.Initialize())
+            {
+                Debug.WriteLine("✓ Weapon Detection OK");
+            }
+
+            // TEST AI VISION (non blocca se fallisce, ma è utile per debug e per escludere problemi ONNX Runtime o GPU)
+            var aiVision = new AIVisionService();
+            if (aiVision.Initialize("C:\\Users\\ari63\\Desktop\\Macro-master\\Macro-master\\MacroWarzone\\models\\yolov8n_warzone.onnx"))
+            {
+                Debug.WriteLine("✓ AI Vision OK");
+            }
+
 
             RaiseStatus("Avvio loop realtime...");
             _cts = new CancellationTokenSource();
@@ -529,6 +557,19 @@ public class BackendService : IDisposable
                 UseResponseOverride = true,
                 ResponseCenterBoost = 1.3 // Boost sensibilità centro (+30%
             },
+            AIVisionAimAssist = new AIVisionAimAssistConfig
+            {
+                Enabled = false,
+                ActivationTrigger = "L1+R1",
+                ADSTrigger = "L1",
+                AssistStrength = 0.25,
+                SmoothingMs = 0.25,
+                MaxRotationSpeed = 1.5,
+                ReactionDelayMs = 50,
+                UseGPU = true,
+                CaptureHz = 30
+
+            },
             AutoPing = new AutoPingConfig
             {
                 Enabled = false,
@@ -559,6 +600,7 @@ public class BackendService : IDisposable
         cfg.AntiRecoil ??= new AntiRecoilConfig();
         cfg.AimAssist ??= new AimAssistConfig();
         cfg.ZenCronusAimAssist ??= new ZenCronusAimAssistConfig();
+        cfg.AIVisionAimAssist ??= new AIVisionAimAssistConfig();
         cfg.AutoPing ??= new AutoPingConfig();
         cfg.IsUsingSniper ??= new IsUsingSniperConfig();
         cfg.RapidFire ??= new RapidFireConfig();

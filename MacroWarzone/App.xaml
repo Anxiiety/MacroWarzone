@@ -11,6 +11,9 @@
 		<SolidColorBrush x:Key="TextWhite" Color="White"/>
 		<SolidColorBrush x:Key="SuccessGreen" Color="#4CAF50"/>
 		<SolidColorBrush x:Key="ErrorRed" Color="#F44336"/>
+        
 
 	</Application.Resources>
+    
+    
 </Application>

@@ -13,8 +13,8 @@ public sealed class MacroConfiguration
     public RealtimeAntiRecoilConfig RealtimeAntiRecoil { get; set; } = new();
     public AntiRecoilConfig AntiRecoil { get; set; } = new();
     public AimAssistConfig AimAssist { get; set; } = new();
-
     public ZenCronusAimAssistConfig ZenCronusAimAssist { get; set; } = new();
+    public AIVisionAimAssistConfig AIVisionAimAssist { get; set; } = new();
     public AutoPingConfig AutoPing { get; set; } = new();
     public IsUsingSniperConfig IsUsingSniper { get; set; } = new();
     public RapidFireConfig RapidFire { get; set; } = new();
@@ -121,6 +121,28 @@ public sealed class ZenCronusAimAssistConfig
     public bool UseResponseOverride { get; set; } = true;
     public double ResponseCenterBoost { get; set; } = 1.3;  // +30% sens centro
 }
+
+public sealed class AIVisionAimAssistConfig
+{
+    public bool Enabled { get; set; } = false;
+
+    // Trigger
+    public string ActivationTrigger { get; set; } = "L1";  // Hold L1 per attivare
+    public string ADSTrigger { get; set; } = "L2";
+
+    // Parametri AI
+    public double AssistStrength { get; set; } = 0.3;      // 30% forza
+    public double SmoothingMs { get; set; } = 50;          // 50ms smoothing
+    public double MaxRotationSpeed { get; set; } = 180.0;  // 180°/sec max
+    public int ReactionDelayMs { get; set; } = 80;         // 80ms delay umano
+
+    // Capture settings
+    public bool UseGPU { get; set; } = true;               // GPU acceleration
+    public int CaptureHz { get; set; } = 30;               // 30 FPS capture
+}
+
+// Aggiungi questa property a MacroConfiguration principale
+
 
 
 // ============================================================================

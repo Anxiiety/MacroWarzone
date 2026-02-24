@@ -1163,7 +1163,7 @@
                     </Expander>
 
                     <!-- ==================== 🎯 CRONUS ZEN AIM ASSIST ==================== -->
-                    <!-- INSERISCI QUESTA SEZIONE DOPO L'EXPANDER "AIM ASSIST" (dopo riga 922) -->
+               
 
                     <Expander IsExpanded="False" Margin="0,15,0,0">
                         <Expander.Header>
@@ -1403,6 +1403,146 @@
                     ToolTip="BubbleStr: 0.92 | PullStr: 0.35"
                     Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
                             </StackPanel>
+
+                        </StackPanel>
+                    </Expander>
+
+                    <!-- ==================== AI VISION AIM ASSIST ==================== -->
+                    <Expander IsExpanded="False" Margin="0,15,0,0">
+                        <Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox Content="🤖 AI VISION AIM ASSIST"
+                      IsChecked="{Binding AIVisionAimAssistEnabled}"
+                      Style="{StaticResource MacroCheckBox}"
+                      FontSize="18"
+                      Margin="0"/>
+
+                                <StackPanel Grid.Column="1" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right"
+                        Margin="10,0,20,0">
+                                    <TextBlock Text="⚠️ EXPERIMENTAL"
+                           Foreground="#EF4444"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           Background="#1AEF4444"
+                           Padding="6,2,6,2"
+                           VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Expander.Header>
+
+                        <StackPanel IsEnabled="{Binding AIVisionAimAssistEnabled}">
+
+                            <!-- WARNING BANNER -->
+                            <Border Background="#1AEF4444" 
+                BorderBrush="#EF4444" 
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12"
+                Margin="20,10,20,15">
+                                <StackPanel>
+                                    <TextBlock Text="⚠️ RICHIEDE YOLO MODEL TRAINED"
+                           Foreground="#FCA5A5"
+                           FontWeight="Bold"
+                           FontSize="13"
+                           Margin="0,0,0,5"/>
+                                    <TextBlock Text="Questo sistema richiede un model YOLO custom trainato su Warzone. Vedi AI_VISION_TRAINING_GUIDE.md per procedura training."
+                           Foreground="#9CA3AF"
+                           FontSize="11"
+                           TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- PARAMETERS -->
+                            <TextBlock Text="AI Parameters"
+                   Style="{StaticResource SectionHeaderStyle}"
+                   FontSize="14"
+                   Margin="30,5,0,5"/>
+
+                            <Border Margin="30,0,0,10"
+                Padding="14"
+                CornerRadius="8"
+                BorderBrush="#EF444433"
+                BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="70"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Assist Strength -->
+                                    <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="Assist Strength"
+                           Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="0" Grid.Column="1"
+                        Value="{Binding AIAssistStrength}"
+                        Minimum="0" Maximum="1"
+                        TickFrequency="0.05"
+                        Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2"
+                           Text="{Binding AIAssistStrength, StringFormat={}{0:P0}}"
+                           Style="{StaticResource ParamValueStyle}"/>
+
+                                    <!-- Smoothing -->
+                                    <TextBlock Grid.Row="1" Grid.Column="0"
+                           Text="Smoothing (ms)"
+                           Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="1" Grid.Column="1"
+                        Value="{Binding AISmoothingMs}"
+                        Minimum="10" Maximum="200"
+                        TickFrequency="5"
+                        Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2"
+                           Text="{Binding AISmoothingMs, StringFormat={}{0:F0}}"
+                           Style="{StaticResource ParamValueStyle}"/>
+
+                                    <!-- Max Rotation Speed -->
+                                    <TextBlock Grid.Row="2" Grid.Column="0"
+                           Text="Max Rotation (°/s)"
+                           Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="2" Grid.Column="1"
+                        Value="{Binding AIMaxRotationSpeed}"
+                        Minimum="60" Maximum="360"
+                        TickFrequency="30"
+                        Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2"
+                           Text="{Binding AIMaxRotationSpeed, StringFormat={}{0:F0}}"
+                           Style="{StaticResource ParamValueStyle}"/>
+
+                                    <!-- Reaction Delay -->
+                                    <TextBlock Grid.Row="3" Grid.Column="0"
+                           Text="Reaction Delay (ms)"
+                           Style="{StaticResource ParamLabelStyle}"/>
+                                    <Slider Grid.Row="3" Grid.Column="1"
+                        Value="{Binding AIReactionDelayMs}"
+                        Minimum="0" Maximum="300"
+                        TickFrequency="10"
+                        Style="{StaticResource MacroSlider}"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2"
+                           Text="{Binding AIReactionDelayMs, StringFormat={}{0:F0}}"
+                           Style="{StaticResource ParamValueStyle}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- TIP -->
+                            <TextBlock Margin="30,12,30,0"
+                   Foreground="#6B7280"
+                   FontSize="11"
+                   TextWrapping="Wrap"
+                   Text="💡 Tip: Assist Strength 0.3 = subtile. Max Rotation limita velocità per evitare detection. Reaction Delay simula tempo reazione umano."/>
 
                         </StackPanel>
                     </Expander>
