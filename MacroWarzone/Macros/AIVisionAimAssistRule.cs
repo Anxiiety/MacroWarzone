@@ -93,14 +93,15 @@ public sealed class AIVisionAimAssistRule : IMacroRule
                         var allDetections = _aiVision.DetectEnemies(screenFrame);
                         Debug.WriteLine($"[AI VISION] Frame captured, detected {allDetections.Count} enemies");
 
-                        // Update overlay con box rossi
-                        if (_overlay != null && allDetections.Count > 0)
+                        // Update overlay sempre (anche 0 detections) per sincronizzare tracking/scomparsa
+                        if (_overlay != null)
                         {
                             Debug.WriteLine($"[AI VISION] Detected {allDetections.Count} enemies");
                             _overlay.UpdateDetections(allDetections);
                         }
-                        else if (_overlay == null)
-                        {                             Debug.WriteLine($"[AI VISION] Detected {allDetections.Count} enemies (no overlay)");
+                        else
+                        {
+                            Debug.WriteLine($"[AI VISION] Detected {allDetections.Count} enemies (no overlay)");
                         }
                         // Get closest target per aim assist
                         if (allDetections.Count > 0)
