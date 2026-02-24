@@ -186,28 +186,58 @@ public sealed class AIVisionService : IDisposable
     {
         var detections = new List<Detection>();
 
-        // YOLO v8 output shape: [1, 84, 8400]
-        // 84 = 4 bbox coords + 80 classes
-        // 8400 = numero predizioni (grid cells)
+        if (output.Dimensions.Count != 3)
+        {
+            System.Diagnostics.Debug.WriteLine($"[AI VISION] Unsupported output rank: {output.Dimensions.Count}");
+            return detections;
+        }
 
-        int numClasses = 80;
-        int numPredictions = output.Dimensions[2];
+        // Supporta sia [1, channels, predictions] che [1, predictions, channels]
+        bool channelFirst;
+        int channelCount;
+        int numPredictions;
+
+        if (output.Dimensions[1] > 4)
+        {
+            channelFirst = true;
+            channelCount = output.Dimensions[1];
+            numPredictions = output.Dimensions[2];
+        }
+        else if (output.Dimensions[2] > 4)
+        {
+            channelFirst = false;
+            numPredictions = output.Dimensions[1];
+            channelCount = output.Dimensions[2];
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"[AI VISION] Unsupported output shape: [{string.Join(",", output.Dimensions)}]");
+            return detections;
+        }
+
+        int numClasses = channelCount - 4;
+        if (numClasses <= 0)
+        {
+            System.Diagnostics.Debug.WriteLine($"[AI VISION] Invalid channel count: {channelCount}");
+            return detections;
+        }
+
+        float ReadValue(int channel, int prediction) =>
+            channelFirst ? output[0, channel, prediction] : output[0, prediction, channel];
 
         for (int i = 0; i < numPredictions; i++)
         {
-            // Bbox coords (center x, center y, width, height)
-            float cx = output[0, 0, i];
-            float cy = output[0, 1, i];
-            float w = output[0, 2, i];
-            float h = output[0, 3, i];
+            float cx = ReadValue(0, i);
+            float cy = ReadValue(1, i);
+            float w = ReadValue(2, i);
+            float h = ReadValue(3, i);
 
-            // Trova classe con max confidence
             float maxConf = 0;
             int maxClass = 0;
 
             for (int c = 0; c < numClasses; c++)
             {
-                float conf = output[0, 4 + c, i];
+                float conf = ReadValue(4 + c, i);
                 if (conf > maxConf)
                 {
                     maxConf = conf;
